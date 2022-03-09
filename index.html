@@ -5802,7 +5802,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
     <span class="n">api_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'xyz'</span>  <span class="c1"># getpass("Enter API password: ")
 </span>    <span class="k">try</span><span class="p">:</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">grpc_service_stub</span><span class="p">.</span><span class="n">GetTrades</span><span class="p">.</span><span class="n">with_call</span><span class="p">(</span>
-            <span class="n">bisq_messages</span><span class="p">.</span><span class="n">GetTradesRequest</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s">'OPEN'</span><span class="p">),</span>
+            <span class="n">bisq_messages</span><span class="p">.</span><span class="n">GetTradesRequest</span><span class="p">(</span>
+                <span class="n">category</span><span class="o">=</span><span class="n">bisq_messages</span><span class="p">.</span><span class="n">GetTradesRequest</span><span class="p">.</span><span class="n">Category</span><span class="p">.</span><span class="n">CLOSED</span><span class="p">),</span>
             <span class="n">metadata</span><span class="o">=</span><span class="p">[(</span><span class="s">'password'</span><span class="p">,</span> <span class="n">api_password</span><span class="p">)])</span>
         <span class="k">print</span><span class="p">(</span><span class="s">'Response: '</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">response</span><span class="p">))</span>
     <span class="k">except</span> <span class="n">grpc</span><span class="p">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">rpc_error</span><span class="p">:</span>
