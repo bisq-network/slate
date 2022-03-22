@@ -875,58 +875,13 @@ the <a href="https://github.com/bisq-network/bisq/blob/master/apitest/docs/api-b
 plugins.</li>
 </ul>
 
-<p>Instructions for generating the Bisq API Python stubs follow.</p>
-<h3 id='install-python-plugins-for-protoc-compiler'>Install python plugins for protoc compiler</h3>
-<p><code>$ python -m pip install grpcio grpcio-tools</code></br>
-    <code>$ pip3 install mypy-protobuf</code></p>
-<h3 id='download-the-bisq-proto-files-to-your-python-project'>Download the Bisq .proto files to your Python project</h3>
-<p>If your Python scripts are located in a directory named  <code>my-api-scripts</code>, open a terminal in that directory and
-download the Bisq .proto files to a directory named <code>my-api-scripts/proto</code>:</p>
+<p>You can download the Bisq protobuf (.proto) files by running:</p>
 
-<p><code>$ export PROTO_PATH=&quot;proto&quot;</code></br>
-    <code>$ curl -o $PROTO_PATH/pb.proto https://raw.githubusercontent.com/bisq-network/bisq/master/proto/src/main/proto/pb.proto</code></br>
-    <code>$ curl -o $PROTO_PATH/grpc.proto https://raw.githubusercontent.com/bisq-network/bisq/master/proto/src/main/proto/grpc.proto</code></p>
-<h3 id='generate-bisq-api-grpc-python-stubs'>Generate Bisq API gRPC Python stubs</h3>
-<p>The location of Python code generated from downloaded Bisq .proto files <em>must</em> be <code>&lt;python-examples-dir&gt;/bisq/api</code>, or
-this document&#39;s example Python scripts will not be able to import them at runtime. Put another way, if your Python
-scripts are in a folder named <code>my-api-scripts</code>, the <code>protoc</code> compiler must generate Python stubs
-in <code>my-api-scripts/bisq/api</code>. Each step of the setup is explained below.</p>
+<p><code>proto-downloader/download-bisq-protos.sh</code></p>
 
-<p>If</p>
+<p>You can build Python .proto stubs, install Python example dependencies, and package the examples by running:</p>
 
-<ul>
-<li>Python scripts are located in  <code>my-api-scripts</code></li>
-<li>Downloaded Bisq .proto files are located in  <code>my-api-scripts/proto</code></li>
-<li>A terminal is opened in directory <code>my-api-scripts</code></li>
-</ul>
-
-<p>Generate API Python stubs in <code>my-api-scripts/bisq/api</code>, as follows:</p>
-
-<p><code>$ export PROTO_PATH=&quot;proto&quot;</code></br>
-    <code>$ export PYTHON_PROTO_OUT_PATH=&quot;bisq/api&quot;</code></br>
-    </br>
-    <code>$ python3 -m grpc_tools.protoc \</code></br>
-        <code>--proto_path=$PROTO_PATH \</code></br>
-        <code>--python_out=$PYTHON_PROTO_OUT_PATH \</code></br>
-        <code>--grpc_python_out=$PYTHON_PROTO_OUT_PATH $PROTO_PATH/*.proto</code></br>
-    </br>
-    <code>$ protoc --proto_path=$PROTO_PATH --python_out=$PYTHON_PROTO_OUT_PATH $PROTO_PATH/*.proto</code></br>
-    </br>
-    <code># Hack two internal import statements in the generated Python code to prepend the bisq.api package name.</code></br>
-    <code># See why @ https://github.com/protocolbuffers/protobuf/issues/1491</code></br>
-    </br>
-    <code>sed -i &#39;s/import pb_pb2 as pb__pb2/import bisq.api.pb_pb2 as pb__pb2/g&#39; $PYTHON_PROTO_OUT_PATH/grpc_pb2.py</code></br>
-    <code>sed -i &#39;s/import grpc_pb2 as grpc__pb2/import bisq.api.grpc_pb2 as grpc__pb2/g&#39; $PYTHON_PROTO_OUT_PATH/grpc_pb2_grpc.py</code></p>
-
-<p>Now you should be able to import the Bisq gRPC API stubs into scripts located in <code>my-api-scripts</code>, using the following
-Python import statements:</p>
-
-<p><code>import grpc</code></br>
-    <code>import bisq.api.grpc_pb2 as bisq_messages</code></br>
-    <code>import bisq.api.grpc_pb2_grpc as bisq_service</code></p>
-<h3 id='todo-simplify-these-python-example-setup-sections'><em>TODO Simplify these Python example setup sections...</em></h3>
-<p><em>if more experienced Python developers can demonstrate an easier, more flexible way of generating protobuf / grpc stubs
-without having to manually hack internal import statements.</em></p>
+<p><code>python-examples/run-setup.sh</code></p>
 <h1 id='authentication'>Authentication</h1>
 <p>An API password option <code>--apiPassword=&lt;api-password&gt;</code> is passed in the daemon&#39;s start command.</p>
 
@@ -964,7 +919,7 @@ without having to manually hack internal import statements.</em></p>
 <h1 id='service-getversion'>Service GetVersion</h1><h2 id='rpc-method-getversion'>RPC Method GetVersion</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getversion
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetVersionGrpc</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetVersionRequest</span><span class="o">;</span>
@@ -993,7 +948,7 @@ without having to manually hack internal import statements.</em></p>
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -1067,8 +1022,8 @@ without having to manually hack internal import statements.</em></p>
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -1107,7 +1062,7 @@ without having to manually hack internal import statements.</em></p>
 <h1 id='service-help'>Service Help</h1><h2 id='rpc-method-getmethodhelp'>RPC Method GetMethodHelp</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 createoffer <span class="nt">--help</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span><span class="c1">// Help Service is for CLI users.</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span><span class="c1">// Help Service is for CLI users.</span>
 </code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="c1"># Help Service is for CLI users.
 </span></code></pre></div><h3 id='unary-rpc-3'>Unary RPC</h3>
 <p>Returns a CLI command man page.</p>
@@ -1145,7 +1100,7 @@ without having to manually hack internal import statements.</em></p>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 canceloffer <span class="se">\</span>
   <span class="nt">--offer-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.CancelOfferRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -1176,7 +1131,7 @@ without having to manually hack internal import statements.</em></p>
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -1250,8 +1205,8 @@ without having to manually hack internal import statements.</em></p>
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -1296,7 +1251,7 @@ without having to manually hack internal import statements.</em></p>
   <span class="nt">--min-amount</span><span class="o">=</span>0.25 <span class="se">\</span>
   <span class="nt">--fixed-price</span><span class="o">=</span>0.00005
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.CreateBsqSwapOfferRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -1330,7 +1285,7 @@ without having to manually hack internal import statements.</em></p>
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -1404,8 +1359,8 @@ without having to manually hack internal import statements.</em></p>
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -1504,7 +1459,7 @@ without having to manually hack internal import statements.</em></p>
   <span class="nt">--amount</span><span class="o">=</span>0.5 <span class="se">\</span>
   <span class="nt">--fixed-price</span><span class="o">=</span>0.00005
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.CreateOfferRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -1594,7 +1549,7 @@ without having to manually hack internal import statements.</em></p>
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -1669,8 +1624,8 @@ without having to manually hack internal import statements.</em></p>
 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -1862,7 +1817,7 @@ without having to manually hack internal import statements.</em></p>
   <span class="nt">--trigger-price</span><span class="o">=</span>33000.0000 <span class="se">\</span>
   <span class="nt">--enable</span><span class="o">=</span><span class="nb">true</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.EditOfferRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -1965,7 +1920,7 @@ without having to manually hack internal import statements.</em></p>
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -2040,8 +1995,8 @@ without having to manually hack internal import statements.</em></p>
 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 <span class="n">EDITED_USD_OFFER_ID</span> <span class="o">=</span> <span class="s">'44736-16df6819-d98b-4f13-87dd-50087c464fac-184'</span>
 
@@ -2250,7 +2205,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getoffer <span class="se">\</span>
   <span class="nt">--offer-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetOfferRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -2281,7 +2236,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -2355,8 +2310,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -2410,7 +2365,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c"># Get available BSQ swap offers to sell BTC for BSQ.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getoffers <span class="nt">--direction</span><span class="o">=</span>SELL <span class="nt">--currency-code</span><span class="o">=</span>BSQ
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetBsqSwapOffersRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -2441,7 +2396,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -2515,8 +2470,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -2568,7 +2523,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getmyoffer <span class="se">\</span>
   <span class="nt">--offer-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetMyOfferRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -2599,7 +2554,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -2673,8 +2628,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -2730,7 +2685,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c"># Get my BSQ swap offers to sell BTC for BSQ.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getmyoffers <span class="nt">--direction</span><span class="o">=</span>SELL <span class="nt">--currency-code</span><span class="o">=</span>BSQ
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetBsqSwapOffersRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -2761,7 +2716,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -2835,8 +2790,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -2889,7 +2844,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getmyoffer <span class="se">\</span>
   <span class="nt">--offer-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetMyOfferRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -2920,7 +2875,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -2994,8 +2949,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -3053,7 +3008,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c"># Get my offers to sell BTC for EUR.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getmyoffers <span class="nt">--direction</span><span class="o">=</span>SELL <span class="nt">--currency-code</span><span class="o">=</span>EUR
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetMyOffersRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -3085,7 +3040,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -3159,8 +3114,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -3220,7 +3175,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getoffer <span class="se">\</span>
   <span class="nt">--offer-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetOfferRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -3251,7 +3206,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -3325,8 +3280,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -3376,7 +3331,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 </tbody></table>
 <h2 id='rpc-method-getoffercategory'>RPC Method GetOfferCategory</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c"># Used internally by CLI;  there is no user CLI command 'getoffercategory'.</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetOfferCategoryRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -3407,7 +3362,7 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -3481,8 +3436,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -3574,7 +3529,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Get available offers to sell BTC for JPY.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getoffers <span class="nt">--direction</span><span class="o">=</span>SELL <span class="nt">--currency-code</span><span class="o">=</span>JPY
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetOffersRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -3606,7 +3561,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -3680,8 +3635,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -3746,7 +3701,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
   <span class="nt">--address</span><span class="o">=</span>4AsjtNXChh3Va58czCWHjn9S8ZFnsxggGZoSePauBHmSMr8vY5aBSqrPtQ9Y9M1iwkBHxcuTWXJsJ4NDATQjQJyKBXR7WP7 <span class="se">\</span>
   <span class="nt">--trade-instant</span><span class="o">=</span><span class="nb">false</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.CreateCryptoCurrencyPaymentAccountRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.PaymentAccountsGrpc</span><span class="o">;</span>
@@ -3781,7 +3736,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -3855,8 +3810,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -3927,7 +3882,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Create a swift fiat payment account, providing details in a json form generated by getpaymentacctform.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 createpaymentacct <span class="nt">--payment-account-form</span><span class="o">=</span>swift.json
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.CreatePaymentAccountRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.PaymentAccountsGrpc</span><span class="o">;</span>
@@ -3959,7 +3914,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -4033,8 +3988,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -4088,7 +4043,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-getcryptocurrencypaymentmethods'>RPC Method GetCryptoCurrencyPaymentMethods</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 <span class="c"># Not yet supported in CLI.  API currently supports only BSQ, BSQ Swap, and XMR trading.</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetCryptoCurrencyPaymentMethodsRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.PaymentAccountsGrpc</span><span class="o">;</span>
@@ -4117,7 +4072,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -4191,8 +4146,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -4235,7 +4190,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Get a blank SWIFT payment account form and save the json file in the current working directory.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getpaymentacctform <span class="nt">--payment-method-id</span><span class="o">=</span>SWIFT
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetPaymentAccountFormRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.PaymentAccountsGrpc</span><span class="o">;</span>
@@ -4275,7 +4230,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -4344,13 +4299,15 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
     <span class="o">}</span>
 <span class="o">}</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="k">print</span>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">tempfile</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="k">print</span>
 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -4365,7 +4322,12 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
         <span class="k">print</span><span class="p">(</span><span class="s">'Response: '</span> <span class="o">+</span> <span class="n">json_string</span><span class="p">)</span>
         <span class="c1"># The client should save this json string to file, manually fill in the form
 </span>        <span class="c1"># fields, then use it as shown in the create_payment_account.py example.
-</span>    <span class="k">except</span> <span class="n">grpc</span><span class="p">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">rpc_error</span><span class="p">:</span>
+</span>        <span class="n">json_filename</span> <span class="o">=</span> <span class="n">os</span><span class="p">.</span><span class="n">sep</span><span class="p">.</span><span class="n">join</span><span class="p">([</span><span class="n">tempfile</span><span class="p">.</span><span class="n">gettempdir</span><span class="p">(),</span> <span class="s">'swift-account-form.json'</span><span class="p">])</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'Write response to json file:  {0}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">json_filename</span><span class="p">))</span>
+        <span class="n">json_file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">json_filename</span><span class="p">,</span> <span class="s">"w"</span><span class="p">)</span>
+        <span class="n">num_written_chars</span> <span class="o">=</span> <span class="n">json_file</span><span class="p">.</span><span class="n">write</span><span class="p">(</span><span class="n">json_string</span><span class="p">)</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'Wrote {0} characters to {1}'</span><span class="p">.</span><span class="nb">format</span><span class="p">(</span><span class="n">num_written_chars</span><span class="p">,</span> <span class="n">json_file</span><span class="p">.</span><span class="n">name</span><span class="p">))</span>
+    <span class="k">except</span> <span class="n">grpc</span><span class="p">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">rpc_error</span><span class="p">:</span>
         <span class="k">print</span><span class="p">(</span><span class="s">'gRPC API Exception: %s'</span><span class="p">,</span> <span class="n">rpc_error</span><span class="p">)</span>
 
 
@@ -4405,7 +4367,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Get list of all saved payment accounts, including altcoin accounts.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getpaymentaccts
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetPaymentAccountsRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.PaymentAccountsGrpc</span><span class="o">;</span>
@@ -4434,7 +4396,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -4508,8 +4470,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -4557,7 +4519,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Get the ids of all supported Bisq payment methods.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getpaymentmethods
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetPaymentMethodsRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.PaymentAccountsGrpc</span><span class="o">;</span>
@@ -4586,7 +4548,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -4660,8 +4622,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -4704,7 +4666,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Get most recently available market price of XMR in BTC.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getbtcprice <span class="nt">--currency-code</span><span class="o">=</span>XMR
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.MarketPriceRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.PriceGrpc</span><span class="o">;</span>
@@ -4735,7 +4697,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -4809,8 +4771,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -4861,7 +4823,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h1 id='service-shutdownserver'>Service ShutdownServer</h1><h2 id='rpc-method-stop'>RPC Method Stop</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 stop
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.ShutdownServerGrpc</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.StopRequest</span><span class="o">;</span>
@@ -4890,7 +4852,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -4964,8 +4926,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -4993,7 +4955,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-closetrade'>RPC Method CloseTrade</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 closetrade <span class="nt">--trade-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.CloseTradeRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.TradesGrpc</span><span class="o">;</span>
@@ -5024,7 +4986,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -5098,8 +5060,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -5140,7 +5102,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 confirmpaymentreceived <span class="se">\</span>
   <span class="nt">--trade-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.ConfirmPaymentReceivedRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.TradesGrpc</span><span class="o">;</span>
@@ -5171,7 +5133,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -5245,8 +5207,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -5287,7 +5249,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 confirmpaymentstarted <span class="se">\</span>
   <span class="nt">--trade-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.ConfirmPaymentStartedRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.TradesGrpc</span><span class="o">;</span>
@@ -5318,7 +5280,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -5392,8 +5354,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -5432,7 +5394,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-failtrade'>RPC Method FailTrade</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 failtrade <span class="nt">--trade-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.FailTradeRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.TradesGrpc</span><span class="o">;</span>
@@ -5463,7 +5425,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -5537,8 +5499,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -5577,7 +5539,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-gettrade'>RPC Method GetTrade</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 gettrade <span class="nt">--trade-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetTradeRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.TradesGrpc</span><span class="o">;</span>
@@ -5608,7 +5570,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -5682,8 +5644,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -5742,7 +5704,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Get failed trades.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 gettrades <span class="nt">--category</span><span class="o">=</span>failed
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetTradesRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.TradesGrpc</span><span class="o">;</span>
@@ -5774,7 +5736,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -5848,8 +5810,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -5937,7 +5899,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
     <span class="nt">--payment-account-id</span><span class="o">=</span>fe20cdbd-22be-4b8a-a4b6-d2608ff09d6e <span class="se">\</span>
     <span class="nt">--fee-currency</span><span class="o">=</span>BTC
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetOfferCategoryRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.OffersGrpc</span><span class="o">;</span>
@@ -5990,7 +5952,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -6064,8 +6026,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -6143,7 +6105,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-unfailtrade'>RPC Method UnFailTrade</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 unfailtrade <span class="nt">--trade-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.TradesGrpc</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.UnFailTradeRequest</span><span class="o">;</span>
@@ -6174,7 +6136,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -6268,7 +6230,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
   <span class="nt">--address</span><span class="o">=</span>bcrt1qqau7ad7lf8xx08mnxl709h6cdv4ma9u3ace5k2 <span class="se">\</span>
   <span class="nt">--memo</span><span class="o">=</span><span class="s2">"Optional memo saved with transaction in Bisq wallet."</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.TradesGrpc</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WithdrawFundsRequest</span><span class="o">;</span>
@@ -6301,7 +6263,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -6375,8 +6337,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -6429,7 +6391,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-getaddressbalance'>RPC Method GetAddressBalance</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getaddressbalance <span class="nt">--address</span><span class="o">=</span>bcrt1qygvsqmyt8jyhtp7l3zwqm7s7v3nar6vkc2luz3
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetAddressBalanceRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -6460,7 +6422,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -6534,8 +6496,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -6593,7 +6555,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getbalance <span class="nt">--currency-code</span><span class="o">=</span>BSQ
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getbalance <span class="nt">--currency-code</span><span class="o">=</span>BTC
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetBalancesRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -6623,7 +6585,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -6697,8 +6659,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -6750,7 +6712,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-getfundingaddresses'>RPC Method GetFundingAddresses</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getfundingaddresses
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetFundingAddressesRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -6779,7 +6741,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -6853,8 +6815,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -6901,7 +6863,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 gettransaction <span class="se">\</span>
   <span class="nt">--transaction-id</span><span class="o">=</span>fef206f2ada53e70fd8430d130e43bc3994ce075d50ac1f4fda8182c40ef6bdd
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetTransactionRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -6932,7 +6894,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -7006,8 +6968,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -7059,7 +7021,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-gettxfeerate'>RPC Method GetTxFeeRate</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 gettxfeerate
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetTxFeeRateRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -7088,7 +7050,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -7162,8 +7124,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -7202,7 +7164,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-getunusedbsqaddress'>RPC Method GetUnusedBsqAddress</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getunusedbsqaddress
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetUnusedBsqAddressRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -7231,7 +7193,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -7305,8 +7267,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -7345,7 +7307,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-lockwallet'>RPC Method LockWallet</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 lockwallet
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.LockWalletRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -7374,7 +7336,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -7448,8 +7410,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -7477,7 +7439,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Note: CLI command option parser expects a --wallet-password option, to differentiate it from an api daemon password.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 removewalletpassword <span class="nt">--wallet-password</span><span class="o">=</span><span class="s2">"abc"</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.RemoveWalletPasswordRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -7506,7 +7468,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -7580,8 +7542,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -7622,7 +7584,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
   <span class="nt">--address</span><span class="o">=</span>Bbcrt1q9elrmtxtzpwt25zq2pmeeu6qk8029w404ad0xn <span class="se">\</span>
   <span class="nt">--amount</span><span class="o">=</span>1000.10
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.SendBsqRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -7655,7 +7617,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -7729,8 +7691,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -7797,7 +7759,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
   <span class="nt">--amount</span><span class="o">=</span>0.006 <span class="se">\</span>
   <span class="nt">--tx-fee-rate</span><span class="o">=</span>20
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.SendBtcRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -7831,7 +7793,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -7905,8 +7867,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -7976,7 +7938,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-settxfeeratepreference'>RPC Method SetTxFeeRatePreference</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 settxfeerate <span class="nt">--tx-fee-rate</span><span class="o">=</span>50
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.SetTxFeeRatePreferenceRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -8007,7 +7969,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -8081,8 +8043,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -8134,7 +8096,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c"># Note: CLI command option parser expects a --wallet-password option, to differentiate it from an api daemon password.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 setwalletpassword <span class="nt">--wallet-password</span><span class="o">=</span><span class="s2">"abc"</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.SetWalletPasswordRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -8163,7 +8125,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -8237,8 +8199,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -8282,7 +8244,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <h2 id='rpc-method-unlockwallet'>RPC Method UnlockWallet</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 unlockwallet <span class="nt">--wallet-password</span><span class="o">=</span>abc <span class="nt">--timeout</span><span class="o">=</span>30
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.UnlockWalletRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -8314,7 +8276,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -8388,8 +8350,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -8438,7 +8400,7 @@ setting can be overridden by subsequent UnlockWallet calls.</p>
 <h2 id='rpc-method-unsettxfeeratepreference'>RPC Method UnsetTxFeeRatePreference</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 unsettxfeerate
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.UnsetTxFeeRatePreferenceRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -8467,7 +8429,7 @@ setting can be overridden by subsequent UnlockWallet calls.</p>
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -8541,8 +8503,8 @@ setting can be overridden by subsequent UnlockWallet calls.</p>
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
@@ -8583,7 +8545,7 @@ setting can be overridden by subsequent UnlockWallet calls.</p>
   <span class="nt">--address</span><span class="o">=</span>Bbcrt1q9elrmtxtzpwt25zq2pmeeu6qk8029w404ad0xn <span class="se">\</span>
   <span class="nt">--amount</span><span class="o">=</span><span class="s2">"50.50"</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.VerifyBsqSentToAddressRequest</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
@@ -8615,7 +8577,7 @@ setting can be overridden by subsequent UnlockWallet calls.</p>
 <span class="c1">// BaseJavaExample</span>
 <span class="c1">//////////////////</span>
 
-<span class="kn">package</span> <span class="nn">rpccalls</span><span class="o">;</span>
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
 
 <span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
 <span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
@@ -8689,8 +8651,8 @@ setting can be overridden by subsequent UnlockWallet calls.</p>
 <span class="kn">import</span> <span class="nn">grpc</span>
 
 <span class="c1"># from getpass import getpass
-</span><span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
-<span class="kn">import</span> <span class="nn">python_examples.bisqapi.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
