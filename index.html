@@ -4636,7 +4636,136 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <td>Ids of all supported Bisq fiat payment methods.</td>
 </tr>
 </tbody></table>
-<h1 id='service-price'>Service Price</h1><h2 id='rpc-method-getaveragebsqtradeprice'>RPC Method GetAverageBsqTradePrice</h2><h3 id='unary-rpc-23'>Unary RPC</h3>
+<h1 id='service-price'>Service Price</h1><h2 id='rpc-method-getaveragebsqtradeprice'>RPC Method GetAverageBsqTradePrice</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
+./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getavgbsqprice <span class="nt">--days</span><span class="o">=</span>30
+
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetAverageBsqTradePriceRequest</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">bisq.proto.grpc.PriceGrpc</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.grpc.ManagedChannelBuilder</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">String</span><span class="o">.</span><span class="na">format</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">System</span><span class="o">.</span><span class="na">out</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">GetAverageBsqTradePrice</span> <span class="kd">extends</span> <span class="nc">BaseJavaExample</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="kt">var</span> <span class="n">channel</span> <span class="o">=</span> <span class="nc">ManagedChannelBuilder</span><span class="o">.</span><span class="na">forAddress</span><span class="o">(</span><span class="s">"localhost"</span><span class="o">,</span> <span class="mi">9998</span><span class="o">).</span><span class="na">usePlaintext</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+            <span class="n">addChannelShutdownHook</span><span class="o">(</span><span class="n">channel</span><span class="o">);</span>
+            <span class="kt">var</span> <span class="n">credentials</span> <span class="o">=</span> <span class="n">buildCallCredentials</span><span class="o">(</span><span class="n">getApiPassword</span><span class="o">());</span>
+            <span class="kt">var</span> <span class="n">stub</span> <span class="o">=</span> <span class="nc">PriceGrpc</span><span class="o">.</span><span class="na">newBlockingStub</span><span class="o">(</span><span class="n">channel</span><span class="o">).</span><span class="na">withCallCredentials</span><span class="o">(</span><span class="n">credentials</span><span class="o">);</span>
+            <span class="kt">var</span> <span class="n">request</span> <span class="o">=</span> <span class="nc">GetAverageBsqTradePriceRequest</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">setDays</span><span class="o">(</span><span class="mi">30</span><span class="o">).</span><span class="na">build</span><span class="o">();</span>
+            <span class="kt">var</span> <span class="n">reply</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="na">getAverageBsqTradePrice</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+            <span class="kt">var</span> <span class="n">price</span> <span class="o">=</span> <span class="n">reply</span><span class="o">.</span><span class="na">getPrice</span><span class="o">();</span>
+            <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">format</span><span class="o">(</span><span class="s">"30-day avg BTC price: %s, 30-day avg USD price: %s"</span><span class="o">,</span>
+                    <span class="n">price</span><span class="o">.</span><span class="na">getBtcPrice</span><span class="o">(),</span>
+                    <span class="n">price</span><span class="o">.</span><span class="na">getUsdPrice</span><span class="o">()));</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">handleError</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">//////////////////</span>
+<span class="c1">// BaseJavaExample</span>
+<span class="c1">//////////////////</span>
+
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.grpc.Metadata</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.grpc.StatusRuntimeException</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.Executor</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">io</span><span class="o">.</span><span class="na">grpc</span><span class="o">.</span><span class="na">Metadata</span><span class="o">.</span><span class="na">ASCII_STRING_MARSHALLER</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">io</span><span class="o">.</span><span class="na">grpc</span><span class="o">.</span><span class="na">Status</span><span class="o">.</span><span class="na">UNAUTHENTICATED</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">System</span><span class="o">.*;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">concurrent</span><span class="o">.</span><span class="na">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BaseJavaExample</span> <span class="o">{</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">addChannelShutdownHook</span><span class="o">(</span><span class="nc">ManagedChannel</span> <span class="n">channel</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Runtime</span><span class="o">.</span><span class="na">getRuntime</span><span class="o">().</span><span class="na">addShutdownHook</span><span class="o">(</span><span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">channel</span><span class="o">.</span><span class="na">shutdown</span><span class="o">().</span><span class="na">awaitTermination</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="no">SECONDS</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"Error shutting down gRPC channel."</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}));</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="nc">String</span> <span class="nf">getApiPassword</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Scanner</span> <span class="n">scanner</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Scanner</span><span class="o">(</span><span class="n">in</span><span class="o">);</span>
+        <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Enter api password:"</span><span class="o">);</span>
+        <span class="kt">var</span> <span class="n">apiPassword</span> <span class="o">=</span> <span class="s">"xyz"</span><span class="o">;</span>    <span class="c1">// scanner.nextLine();</span>
+        <span class="n">scanner</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">apiPassword</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="nc">CallCredentials</span> <span class="nf">buildCallCredentials</span><span class="o">(</span><span class="nc">String</span> <span class="n">apiPassword</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">CallCredentials</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">applyRequestMetadata</span><span class="o">(</span><span class="nc">RequestInfo</span> <span class="n">requestInfo</span><span class="o">,</span>
+                                             <span class="nc">Executor</span> <span class="n">appExecutor</span><span class="o">,</span>
+                                             <span class="nc">MetadataApplier</span> <span class="n">metadataApplier</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">appExecutor</span><span class="o">.</span><span class="na">execute</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                    <span class="k">try</span> <span class="o">{</span>
+                        <span class="kt">var</span> <span class="n">headers</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Metadata</span><span class="o">();</span>
+                        <span class="kt">var</span> <span class="n">passwordKey</span> <span class="o">=</span> <span class="nc">Metadata</span><span class="o">.</span><span class="na">Key</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"password"</span><span class="o">,</span> <span class="no">ASCII_STRING_MARSHALLER</span><span class="o">);</span>
+                        <span class="n">headers</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">passwordKey</span><span class="o">,</span> <span class="n">apiPassword</span><span class="o">);</span>
+                        <span class="n">metadataApplier</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">headers</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">metadataApplier</span><span class="o">.</span><span class="na">fail</span><span class="o">(</span><span class="no">UNAUTHENTICATED</span><span class="o">.</span><span class="na">withCause</span><span class="o">(</span><span class="n">ex</span><span class="o">));</span>
+                    <span class="o">}</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">thisUsesUnstableApi</span><span class="o">()</span> <span class="o">{</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">handleError</span><span class="o">(</span><span class="nc">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="k">instanceof</span> <span class="nc">StatusRuntimeException</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">var</span> <span class="n">grpcErrorStatus</span> <span class="o">=</span> <span class="o">((</span><span class="nc">StatusRuntimeException</span><span class="o">)</span> <span class="n">t</span><span class="o">).</span><span class="na">getStatus</span><span class="o">();</span>
+            <span class="n">err</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">grpcErrorStatus</span><span class="o">.</span><span class="na">getCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">": "</span> <span class="o">+</span> <span class="n">grpcErrorStatus</span><span class="o">.</span><span class="na">getDescription</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">err</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Error: "</span> <span class="o">+</span> <span class="n">t</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">grpc</span>
+
+<span class="c1"># from getpass import getpass
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+<span class="kn">import</span> <span class="nn">grpc</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">grpc_channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="p">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s">'localhost:9998'</span><span class="p">)</span>
+    <span class="n">grpc_service_stub</span> <span class="o">=</span> <span class="n">bisq_service</span><span class="p">.</span><span class="n">PriceStub</span><span class="p">(</span><span class="n">grpc_channel</span><span class="p">)</span>
+    <span class="n">api_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'xyz'</span>  <span class="c1"># getpass("Enter API password: ")
+</span>    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">grpc_service_stub</span><span class="p">.</span><span class="n">GetAverageBsqTradePrice</span><span class="p">.</span><span class="n">with_call</span><span class="p">(</span>
+            <span class="n">bisq_messages</span><span class="p">.</span><span class="n">GetAverageBsqTradePriceRequest</span><span class="p">(</span><span class="n">days</span><span class="o">=</span><span class="mi">30</span><span class="p">),</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="p">[(</span><span class="s">'password'</span><span class="p">,</span> <span class="n">api_password</span><span class="p">)])</span>
+        <span class="n">price</span> <span class="o">=</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">price</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'Response: '</span> <span class="o">+</span> <span class="s">'30-day BTC price: '</span> <span class="o">+</span> <span class="n">price</span><span class="p">.</span><span class="n">btc_price</span> <span class="o">+</span> <span class="s">'  30-day USD price: '</span> <span class="o">+</span> <span class="n">price</span><span class="p">.</span><span class="n">usd_pricez</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">grpc</span><span class="p">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">rpc_error</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'gRPC API Exception: %s'</span><span class="p">,</span> <span class="n">rpc_error</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div><h3 id='unary-rpc-23'>Unary RPC</h3>
 <p>Get the volume weighted average trade price for BSQ, calculated over N days.
 The response contains the average BSQ trade price in USD to 4 decimal places, and in BTC to 8 decimal places.</p>
 <h3 id='grpc-request-getaveragebsqtradepricerequest'>gRPC Request: GetAverageBsqTradePriceRequest</h3>
