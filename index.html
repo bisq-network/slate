@@ -430,6 +430,9 @@
             <a href="#service-price" class="toc-h1 toc-link" data-title="Service Price">Service Price</a>
               <ul class="toc-list-h2">
                   <li>
+                    <a href="#rpc-method-getaveragebsqtradeprice" class="toc-h2 toc-link" data-title="RPC Method GetAverageBsqTradePrice">RPC Method GetAverageBsqTradePrice</a>
+                  </li>
+                  <li>
                     <a href="#rpc-method-getmarketprice" class="toc-h2 toc-link" data-title="RPC Method GetMarketPrice">RPC Method GetMarketPrice</a>
                   </li>
               </ul>
@@ -485,6 +488,9 @@
                   </li>
                   <li>
                     <a href="#rpc-method-getfundingaddresses" class="toc-h2 toc-link" data-title="RPC Method GetFundingAddresses">RPC Method GetFundingAddresses</a>
+                  </li>
+                  <li>
+                    <a href="#rpc-method-getnetwork" class="toc-h2 toc-link" data-title="RPC Method GetNetwork">RPC Method GetNetwork</a>
                   </li>
                   <li>
                     <a href="#rpc-method-gettransaction" class="toc-h2 toc-link" data-title="RPC Method GetTransaction">RPC Method GetTransaction</a>
@@ -547,6 +553,9 @@
                   </li>
                   <li>
                     <a href="#availabilityresultwithdescription" class="toc-h2 toc-link" data-title="AvailabilityResultWithDescription">AvailabilityResultWithDescription</a>
+                  </li>
+                  <li>
+                    <a href="#averagebsqtradeprice" class="toc-h2 toc-link" data-title="AverageBsqTradePrice">AverageBsqTradePrice</a>
                   </li>
                   <li>
                     <a href="#balancesinfo" class="toc-h2 toc-link" data-title="BalancesInfo">BalancesInfo</a>
@@ -4627,7 +4636,38 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <td>Ids of all supported Bisq fiat payment methods.</td>
 </tr>
 </tbody></table>
-<h1 id='service-price'>Service Price</h1><h2 id='rpc-method-getmarketprice'>RPC Method GetMarketPrice</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
+<h1 id='service-price'>Service Price</h1><h2 id='rpc-method-getaveragebsqtradeprice'>RPC Method GetAverageBsqTradePrice</h2><h3 id='unary-rpc-23'>Unary RPC</h3>
+<p>Get the volume weighted average trade price for BSQ, calculated over N days.
+The response contains the average BSQ trade price in USD to 4 decimal places, and in BTC to 8 decimal places.</p>
+<h3 id='grpc-request-getaveragebsqtradepricerequest'>gRPC Request: GetAverageBsqTradePriceRequest</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>days</td>
+<td>sint32</td>
+<td>The number of days used in the average BSQ trade price calculations.</td>
+</tr>
+</tbody></table>
+<h3 id='grpc-response-getaveragebsqtradepricereply'>gRPC Response: GetAverageBsqTradePriceReply</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>price</td>
+<td><a href="#averagebsqtradeprice">AverageBsqTradePrice</a></td>
+<td>The average BSQ trade price in USD to 4 decimal places, and in BTC to 8 decimal places.</td>
+</tr>
+</tbody></table>
+<h2 id='rpc-method-getmarketprice'>RPC Method GetMarketPrice</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 <span class="c"># Get most recently available market price of XMR in BTC.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getbtcprice <span class="nt">--currency-code</span><span class="o">=</span>XMR
 
@@ -4753,7 +4793,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-23'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-24'>Unary RPC</h3>
 <p>Get the current market price for a crypto currency.</p>
 <h3 id='grpc-request-marketpricerequest'>gRPC Request: MarketPriceRequest</h3>
 <table><thead>
@@ -4905,7 +4945,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-24'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-25'>Unary RPC</h3>
 <p>Shut down a local Bisq daemon.</p>
 <h3 id='grpc-request-stoprequest'>gRPC Request: StopRequest</h3>
 <p>This Request has no parameters.</p>
@@ -5038,7 +5078,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-25'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-26'>Unary RPC</h3>
 <p>Close a completed trade;  move it to trade history.</p>
 <h3 id='grpc-request-closetraderequest'>gRPC Request: CloseTradeRequest</h3>
 <table><thead>
@@ -5183,7 +5223,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-26'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-27'>Unary RPC</h3>
 <p>Send a &#39;payment received&#39; message to a trading peer (the BTC buyer).</p>
 <h3 id='grpc-request-confirmpaymentreceivedrequest'>gRPC Request: ConfirmPaymentReceivedRequest</h3>
 <table><thead>
@@ -5328,7 +5368,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-27'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-28'>Unary RPC</h3>
 <p>Send a &#39;payment started&#39; message to a trading peer (the BTC seller).</p>
 <h3 id='grpc-request-confirmpaymentstartedrequest'>gRPC Request: ConfirmPaymentStartedRequest</h3>
 <table><thead>
@@ -5471,7 +5511,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-28'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-29'>Unary RPC</h3>
 <p>Fail an open trade.</p>
 <h3 id='grpc-request-failtraderequest'>gRPC Request: FailTradeRequest</h3>
 <table><thead>
@@ -5614,7 +5654,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-29'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-30'>Unary RPC</h3>
 <p>Get a currently open trade.</p>
 <h3 id='grpc-request-gettraderequest'>gRPC Request: GetTradeRequest</h3>
 <table><thead>
@@ -5780,7 +5820,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-30'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-31'>Unary RPC</h3>
 <p>Get currently open, or historical trades (closed or failed).</p>
 <h3 id='grpc-request-gettradesrequest'>gRPC Request: GetTradesRequest</h3><h3 id='enum-category'>Enum: Category</h3>
 <p>Rpc method GetTrades parameter determining what category of trade list is is being requested.</p>
@@ -6006,7 +6046,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-31'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-32'>Unary RPC</h3>
 <p>Take an open offer.</p>
 <h3 id='grpc-request-takeofferrequest'>gRPC Request: TakeOfferRequest</h3>
 <table><thead>
@@ -6024,7 +6064,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <tr>
 <td>payment_account_id</td>
 <td>string</td>
-<td>The unique identifier of the payment account used to take offer..</td>
+<td>The unique identifier of the payment account used to take offer.</td>
 </tr>
 <tr>
 <td>taker_fee_currency_code</td>
@@ -6154,7 +6194,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
     <span class="o">}</span>
 <span class="o">}</span>
 
-</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code></code></pre></div><h3 id='unary-rpc-32'>Unary RPC</h3>
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code></code></pre></div><h3 id='unary-rpc-33'>Unary RPC</h3>
 <p>Unfail a failed trade.</p>
 <h3 id='grpc-request-unfailtraderequest'>gRPC Request: UnFailTradeRequest</h3>
 <table><thead>
@@ -6303,7 +6343,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-33'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-34'>Unary RPC</h3>
 <p>Withdraw trade proceeds to an external bitcoin wallet address.</p>
 <h3 id='grpc-request-withdrawfundsrequest'>gRPC Request: WithdrawFundsRequest</h3>
 <table><thead>
@@ -6465,7 +6505,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-34'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-35'>Unary RPC</h3>
 <p>Get BTC balance for a wallet address.</p>
 <h3 id='grpc-request-getaddressbalancerequest'>gRPC Request: GetAddressBalanceRequest</h3>
 <table><thead>
@@ -6622,7 +6662,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-35'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-36'>Unary RPC</h3>
 <p>Get the Bisq wallet&#39;s current BSQ and BTC balances.</p>
 <h3 id='grpc-request-getbalancesrequest'>gRPC Request: GetBalancesRequest</h3>
 <table><thead>
@@ -6782,7 +6822,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-36'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-37'>Unary RPC</h3>
 <p>Get all bitcoin receiving addresses in the Bisq BTC wallet.</p>
 <h3 id='grpc-request-getfundingaddressesrequest'>gRPC Request: GetFundingAddressesRequest</h3>
 <p>This Request has no parameters.</p>
@@ -6798,6 +6838,147 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <td>address_balance_info</td>
 <td><a href="#addressbalanceinfo">array AddressBalanceInfo</a></td>
 <td>The list of BTC wallet addresses with their balances.</td>
+</tr>
+</tbody></table>
+<h2 id='rpc-method-getnetwork'>RPC Method GetNetwork</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
+./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 getnetwork
+
+</code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">bisq.proto.grpc.GetNetworkRequest</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">bisq.proto.grpc.WalletsGrpc</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.grpc.ManagedChannelBuilder</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">System</span><span class="o">.</span><span class="na">out</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">GetNetwork</span> <span class="kd">extends</span> <span class="nc">BaseJavaExample</span> <span class="o">{</span>
+
+    <span class="kd">public</span> <span class="kd">static</span> <span class="kt">void</span> <span class="nf">main</span><span class="o">(</span><span class="nc">String</span><span class="o">[]</span> <span class="n">args</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">try</span> <span class="o">{</span>
+            <span class="kt">var</span> <span class="n">channel</span> <span class="o">=</span> <span class="nc">ManagedChannelBuilder</span><span class="o">.</span><span class="na">forAddress</span><span class="o">(</span><span class="s">"localhost"</span><span class="o">,</span> <span class="mi">9998</span><span class="o">).</span><span class="na">usePlaintext</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+            <span class="n">addChannelShutdownHook</span><span class="o">(</span><span class="n">channel</span><span class="o">);</span>
+            <span class="kt">var</span> <span class="n">credentials</span> <span class="o">=</span> <span class="n">buildCallCredentials</span><span class="o">(</span><span class="n">getApiPassword</span><span class="o">());</span>
+            <span class="kt">var</span> <span class="n">stub</span> <span class="o">=</span> <span class="nc">WalletsGrpc</span><span class="o">.</span><span class="na">newBlockingStub</span><span class="o">(</span><span class="n">channel</span><span class="o">).</span><span class="na">withCallCredentials</span><span class="o">(</span><span class="n">credentials</span><span class="o">);</span>
+            <span class="kt">var</span> <span class="n">request</span> <span class="o">=</span> <span class="nc">GetNetworkRequest</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">().</span><span class="na">build</span><span class="o">();</span>
+            <span class="kt">var</span> <span class="n">reply</span> <span class="o">=</span> <span class="n">stub</span><span class="o">.</span><span class="na">getNetwork</span><span class="o">(</span><span class="n">request</span><span class="o">);</span>
+            <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">reply</span><span class="o">.</span><span class="na">getNetwork</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+            <span class="n">handleError</span><span class="o">(</span><span class="n">t</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+<span class="c1">//////////////////</span>
+<span class="c1">// BaseJavaExample</span>
+<span class="c1">//////////////////</span>
+
+<span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">io.grpc.CallCredentials</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.grpc.ManagedChannel</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.grpc.Metadata</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">io.grpc.StatusRuntimeException</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">java.util.Scanner</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">java.util.concurrent.Executor</span><span class="o">;</span>
+
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">io</span><span class="o">.</span><span class="na">grpc</span><span class="o">.</span><span class="na">Metadata</span><span class="o">.</span><span class="na">ASCII_STRING_MARSHALLER</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">io</span><span class="o">.</span><span class="na">grpc</span><span class="o">.</span><span class="na">Status</span><span class="o">.</span><span class="na">UNAUTHENTICATED</span><span class="o">;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">lang</span><span class="o">.</span><span class="na">System</span><span class="o">.*;</span>
+<span class="kn">import</span> <span class="nn">static</span> <span class="n">java</span><span class="o">.</span><span class="na">util</span><span class="o">.</span><span class="na">concurrent</span><span class="o">.</span><span class="na">TimeUnit</span><span class="o">.</span><span class="na">SECONDS</span><span class="o">;</span>
+
+<span class="kd">public</span> <span class="kd">class</span> <span class="nc">BaseJavaExample</span> <span class="o">{</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">addChannelShutdownHook</span><span class="o">(</span><span class="nc">ManagedChannel</span> <span class="n">channel</span><span class="o">)</span> <span class="o">{</span>
+        <span class="nc">Runtime</span><span class="o">.</span><span class="na">getRuntime</span><span class="o">().</span><span class="na">addShutdownHook</span><span class="o">(</span><span class="k">new</span> <span class="nc">Thread</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+            <span class="k">try</span> <span class="o">{</span>
+                <span class="n">channel</span><span class="o">.</span><span class="na">shutdown</span><span class="o">().</span><span class="na">awaitTermination</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="no">SECONDS</span><span class="o">);</span>
+            <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">InterruptedException</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                <span class="k">throw</span> <span class="k">new</span> <span class="nf">IllegalStateException</span><span class="o">(</span><span class="s">"Error shutting down gRPC channel."</span><span class="o">,</span> <span class="n">ex</span><span class="o">);</span>
+            <span class="o">}</span>
+        <span class="o">}));</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="nc">String</span> <span class="nf">getApiPassword</span><span class="o">()</span> <span class="o">{</span>
+        <span class="nc">Scanner</span> <span class="n">scanner</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Scanner</span><span class="o">(</span><span class="n">in</span><span class="o">);</span>
+        <span class="n">out</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Enter api password:"</span><span class="o">);</span>
+        <span class="kt">var</span> <span class="n">apiPassword</span> <span class="o">=</span> <span class="s">"xyz"</span><span class="o">;</span>    <span class="c1">// scanner.nextLine();</span>
+        <span class="n">scanner</span><span class="o">.</span><span class="na">close</span><span class="o">();</span>
+        <span class="k">return</span> <span class="n">apiPassword</span><span class="o">;</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="nc">CallCredentials</span> <span class="nf">buildCallCredentials</span><span class="o">(</span><span class="nc">String</span> <span class="n">apiPassword</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">return</span> <span class="k">new</span> <span class="nf">CallCredentials</span><span class="o">()</span> <span class="o">{</span>
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">applyRequestMetadata</span><span class="o">(</span><span class="nc">RequestInfo</span> <span class="n">requestInfo</span><span class="o">,</span>
+                                             <span class="nc">Executor</span> <span class="n">appExecutor</span><span class="o">,</span>
+                                             <span class="nc">MetadataApplier</span> <span class="n">metadataApplier</span><span class="o">)</span> <span class="o">{</span>
+                <span class="n">appExecutor</span><span class="o">.</span><span class="na">execute</span><span class="o">(()</span> <span class="o">-&gt;</span> <span class="o">{</span>
+                    <span class="k">try</span> <span class="o">{</span>
+                        <span class="kt">var</span> <span class="n">headers</span> <span class="o">=</span> <span class="k">new</span> <span class="nc">Metadata</span><span class="o">();</span>
+                        <span class="kt">var</span> <span class="n">passwordKey</span> <span class="o">=</span> <span class="nc">Metadata</span><span class="o">.</span><span class="na">Key</span><span class="o">.</span><span class="na">of</span><span class="o">(</span><span class="s">"password"</span><span class="o">,</span> <span class="no">ASCII_STRING_MARSHALLER</span><span class="o">);</span>
+                        <span class="n">headers</span><span class="o">.</span><span class="na">put</span><span class="o">(</span><span class="n">passwordKey</span><span class="o">,</span> <span class="n">apiPassword</span><span class="o">);</span>
+                        <span class="n">metadataApplier</span><span class="o">.</span><span class="na">apply</span><span class="o">(</span><span class="n">headers</span><span class="o">);</span>
+                    <span class="o">}</span> <span class="k">catch</span> <span class="o">(</span><span class="nc">Throwable</span> <span class="n">ex</span><span class="o">)</span> <span class="o">{</span>
+                        <span class="n">metadataApplier</span><span class="o">.</span><span class="na">fail</span><span class="o">(</span><span class="no">UNAUTHENTICATED</span><span class="o">.</span><span class="na">withCause</span><span class="o">(</span><span class="n">ex</span><span class="o">));</span>
+                    <span class="o">}</span>
+                <span class="o">});</span>
+            <span class="o">}</span>
+
+            <span class="nd">@Override</span>
+            <span class="kd">public</span> <span class="kt">void</span> <span class="nf">thisUsesUnstableApi</span><span class="o">()</span> <span class="o">{</span>
+            <span class="o">}</span>
+        <span class="o">};</span>
+    <span class="o">}</span>
+
+    <span class="kd">static</span> <span class="kt">void</span> <span class="nf">handleError</span><span class="o">(</span><span class="nc">Throwable</span> <span class="n">t</span><span class="o">)</span> <span class="o">{</span>
+        <span class="k">if</span> <span class="o">(</span><span class="n">t</span> <span class="k">instanceof</span> <span class="nc">StatusRuntimeException</span><span class="o">)</span> <span class="o">{</span>
+            <span class="kt">var</span> <span class="n">grpcErrorStatus</span> <span class="o">=</span> <span class="o">((</span><span class="nc">StatusRuntimeException</span><span class="o">)</span> <span class="n">t</span><span class="o">).</span><span class="na">getStatus</span><span class="o">();</span>
+            <span class="n">err</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="n">grpcErrorStatus</span><span class="o">.</span><span class="na">getCode</span><span class="o">()</span> <span class="o">+</span> <span class="s">": "</span> <span class="o">+</span> <span class="n">grpcErrorStatus</span><span class="o">.</span><span class="na">getDescription</span><span class="o">());</span>
+        <span class="o">}</span> <span class="k">else</span> <span class="o">{</span>
+            <span class="n">err</span><span class="o">.</span><span class="na">println</span><span class="o">(</span><span class="s">"Error: "</span> <span class="o">+</span> <span class="n">t</span><span class="o">);</span>
+        <span class="o">}</span>
+    <span class="o">}</span>
+<span class="o">}</span>
+
+</code></pre></div><div class="highlight"><pre class="highlight python tab-python"><code><span class="kn">import</span> <span class="nn">grpc</span>
+
+<span class="c1"># from getpass import getpass
+</span><span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2</span> <span class="k">as</span> <span class="n">bisq_messages</span>
+<span class="kn">import</span> <span class="nn">bisq.api.grpc_pb2_grpc</span> <span class="k">as</span> <span class="n">bisq_service</span>
+
+
+<span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">grpc_channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="p">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s">'localhost:9998'</span><span class="p">)</span>
+    <span class="n">grpc_service_stub</span> <span class="o">=</span> <span class="n">bisq_service</span><span class="p">.</span><span class="n">WalletsStub</span><span class="p">(</span><span class="n">grpc_channel</span><span class="p">)</span>
+    <span class="n">api_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'xyz'</span>  <span class="c1"># getpass("Enter API password: ")
+</span>    <span class="k">try</span><span class="p">:</span>
+        <span class="n">response</span> <span class="o">=</span> <span class="n">grpc_service_stub</span><span class="p">.</span><span class="n">GetNetwork</span><span class="p">.</span><span class="n">with_call</span><span class="p">(</span>
+            <span class="n">bisq_messages</span><span class="p">.</span><span class="n">GetNetworkRequest</span><span class="p">(),</span>
+            <span class="n">metadata</span><span class="o">=</span><span class="p">[(</span><span class="s">'password'</span><span class="p">,</span> <span class="n">api_password</span><span class="p">)])</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'Response: '</span> <span class="o">+</span> <span class="n">response</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">network</span><span class="p">)</span>
+    <span class="k">except</span> <span class="n">grpc</span><span class="p">.</span><span class="n">RpcError</span> <span class="k">as</span> <span class="n">rpc_error</span><span class="p">:</span>
+        <span class="k">print</span><span class="p">(</span><span class="s">'gRPC API Exception: %s'</span><span class="p">,</span> <span class="n">rpc_error</span><span class="p">)</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
+    <span class="n">main</span><span class="p">()</span>
+</code></pre></div><h3 id='unary-rpc-38'>Unary RPC</h3>
+<p>Get the name of the BTC / BSQ network (mainnet, testnet3, or regtest).</p>
+<h3 id='grpc-request-getnetworkrequest'>gRPC Request: GetNetworkRequest</h3>
+<p>This Request has no parameters.</p>
+<h3 id='grpc-response-getnetworkreply'>gRPC Response: GetNetworkReply</h3>
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>network</td>
+<td>string</td>
+<td>The BTC network name (mainnet, testnet3, or regtest).</td>
 </tr>
 </tbody></table>
 <h2 id='rpc-method-gettransaction'>RPC Method GetTransaction</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
@@ -6927,7 +7108,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-37'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-39'>Unary RPC</h3>
 <p>Get a bitcoin transaction summary.</p>
 <h3 id='grpc-request-gettransactionrequest'>gRPC Request: GetTransactionRequest</h3>
 <table><thead>
@@ -7080,7 +7261,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-38'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-40'>Unary RPC</h3>
 <p>Get the Bisq network&#39;s most recently available bitcoin miner transaction fee rate, or custom fee rate if set.</p>
 <h3 id='grpc-request-gettxfeeraterequest'>gRPC Request: GetTxFeeRateRequest</h3>
 <p>This Request has no parameters.</p>
@@ -7221,7 +7402,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-39'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-41'>Unary RPC</h3>
 <p>Get an unused BSQ wallet address.</p>
 <h3 id='grpc-request-getunusedbsqaddressrequest'>gRPC Request: GetUnusedBsqAddressRequest</h3>
 <p>This Request has no parameters.</p>
@@ -7362,7 +7543,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-40'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-42'>Unary RPC</h3>
 <p>Lock an encrypted Bisq wallet before the UnlockWallet rpc method&#39;s timeout period has expired.</p>
 <h3 id='grpc-request-lockwalletrequest'>gRPC Request: LockWalletRequest</h3>
 <p>This Request has no parameters.</p>
@@ -7492,7 +7673,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-41'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-43'>Unary RPC</h3>
 <p>Remove the encryption password from the Bisq wallet.</p>
 <h3 id='grpc-request-removewalletpasswordrequest'>gRPC Request: RemoveWalletPasswordRequest</h3>
 <table><thead>
@@ -7642,7 +7823,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-42'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-44'>Unary RPC</h3>
 <p>Send an amount of BSQ to an external address.</p>
 <h3 id='grpc-request-sendbsqrequest'>gRPC Request: SendBsqRequest</h3>
 <table><thead>
@@ -7817,7 +7998,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-43'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-45'>Unary RPC</h3>
 <p>Send an amount of BTC to an external address.</p>
 <h3 id='grpc-request-sendbtcrequest'>gRPC Request: SendBtcRequest</h3>
 <table><thead>
@@ -7989,8 +8170,8 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-44'>Unary RPC</h3>
-<p>Set the Bisq daemon&#39;s custom bitcoin miner transaction fee rate, in sats/byte..</p>
+</code></pre></div><h3 id='unary-rpc-46'>Unary RPC</h3>
+<p>Set the Bisq daemon&#39;s custom bitcoin miner transaction fee rate, in sats/byte.</p>
 <h3 id='grpc-request-settxfeeratepreferencerequest'>gRPC Request: SetTxFeeRatePreferenceRequest</h3>
 <table><thead>
 <tr>
@@ -8143,7 +8324,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-45'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-47'>Unary RPC</h3>
 <p>Set the Bisq wallet&#39;s encryption password.</p>
 <h3 id='grpc-request-setwalletpasswordrequest'>gRPC Request: SetWalletPasswordRequest</h3>
 <table><thead>
@@ -8294,7 +8475,7 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-46'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-48'>Unary RPC</h3>
 <p>Unlock a Bisq encrypted wallet before calling wallet sensitive rpc methods: CreateOffer, TakeOffer, GetBalances,
 etc., for a timeout period in seconds.  An unlocked wallet will automatically lock itself after the timeout
 period has expired, or a LockWallet request has been made, whichever is first.  An unlocked wallet&#39;s timeout
@@ -8443,7 +8624,7 @@ setting can be overridden by subsequent UnlockWallet calls.</p>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-47'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-49'>Unary RPC</h3>
 <p>Remove the custom bitcoin miner transaction fee rate;  revert to the Bisq network&#39;s bitcoin miner transaction fee rate.</p>
 <h3 id='grpc-request-unsettxfeeratepreferencerequest'>gRPC Request: UnsetTxFeeRatePreferenceRequest</h3>
 <p>This Request has no parameters.</p>
@@ -8591,7 +8772,7 @@ setting can be overridden by subsequent UnlockWallet calls.</p>
 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
-</code></pre></div><h3 id='unary-rpc-48'>Unary RPC</h3>
+</code></pre></div><h3 id='unary-rpc-50'>Unary RPC</h3>
 <p>Verify a specific amount of BSQ was received by a BSQ wallet address.
 This is a problematic way of verifying BSQ payment has been received for a v1 trade protocol BSQ-BTC trade,
 which has been solved by the introduction of BSQ swap trades, which use a different, unused BSQ address for each trade.</p>
@@ -8758,6 +8939,27 @@ which has been solved by the introduction of BSQ swap trades, which use a differ
 <td>A user friendly description of an offer&#39;s current availability status.</td>
 </tr>
 </tbody></table>
+<h2 id='averagebsqtradeprice'>AverageBsqTradePrice</h2>
+<p>The average BSQ trade price in USD and BTC.</p>
+
+<table><thead>
+<tr>
+<th>Name</th>
+<th>Type</th>
+<th>Description</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>usdPrice</td>
+<td>string</td>
+<td>The average BSQ trade price in USD to 4 decimal places.</td>
+</tr>
+<tr>
+<td>btcPrice</td>
+<td>string</td>
+<td>The average BSQ trade price in BTC to 8 decimal places.</td>
+</tr>
+</tbody></table>
 <h2 id='balancesinfo'>BalancesInfo</h2>
 <table><thead>
 <tr>
@@ -8876,8 +9078,6 @@ which has been solved by the introduction of BSQ swap trades, which use a differ
 </tr>
 </tbody></table>
 <h2 id='bsqbalanceinfo'>BsqBalanceInfo</h2>
-<p>TODO Thoroughly review field descriptions.</p>
-
 <table><thead>
 <tr>
 <th>Name</th>
@@ -8998,8 +9198,6 @@ which has been solved by the introduction of BSQ swap trades, which use a differ
 </tr>
 </tbody></table>
 <h2 id='btcbalanceinfo'>BtcBalanceInfo</h2>
-<p>TODO Thoroughly review field descriptions.</p>
-
 <table><thead>
 <tr>
 <th>Name</th>
@@ -9944,6 +10142,11 @@ Offer object in the daemon, which holds too much state to be sent to clients.</p
 <td>payment_account_payload</td>
 <td><a href="#paymentaccountpayload">PaymentAccountPayload</a></td>
 <td></td>
+</tr>
+<tr>
+<td>extra_data</td>
+<td>map&#60;string, string&#62;</td>
+<td>todo</td>
 </tr>
 </tbody></table>
 <h2 id='paymentaccountpayload'>PaymentAccountPayload</h2>
