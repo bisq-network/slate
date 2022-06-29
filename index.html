@@ -3287,7 +3287,8 @@ validation.  (The CLI need to infer this detail from &#39;editoffer&#39; command
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </code></pre></div><h3 id='unary-rpc-14'>Unary RPC</h3>
-<p>Get the v1 protocol offer with offer-id.</p>
+<p>Get the v1 protocol offer with an offer-id.  Your node must have a payment account with the same
+payment method as the offer&#39;s associated payment method, e,g., ACH_TRANSFER, CASH_DEPOSIT, etc.</p>
 <h3 id='grpc-request-getofferrequest-2'>gRPC Request: GetOfferRequest</h3>
 <table><thead>
 <tr>
@@ -3643,7 +3644,9 @@ or a BSQ swap offer.  V1 and BSQ swap trades are handled differently in the API 
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </code></pre></div><h3 id='unary-rpc-16'>Unary RPC</h3>
-<p>Get all available v1 protocol offers with a BUY (BTC) or SELL (BTC) direction.</p>
+<p>Get all available v1 protocol offers with a BUY (BTC) or SELL (BTC) direction.  The returned offers
+are restricted to those associated with payment methods matching the payment methods you have set up
+on your node, e,g., NATIONAL_BANK, US_POSTAL_MONEY_ORDER, etc.</p>
 <h3 id='grpc-request-getoffersrequest'>gRPC Request: GetOffersRequest</h3>
 <table><thead>
 <tr>
@@ -6176,7 +6179,8 @@ The response contains the average BSQ trade price in USD to 4 decimal places, an
 <span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s">'__main__'</span><span class="p">:</span>
     <span class="n">main</span><span class="p">()</span>
 </code></pre></div><h3 id='unary-rpc-32'>Unary RPC</h3>
-<p>Take an open offer.</p>
+<p>Take an available offer.  Your node must have a payment account with the same payment method as
+the offer&#39;s payment method, e.g., NATIONAL_BANK, SEPA, SWIFT, etc.</p>
 <h3 id='grpc-request-takeofferrequest'>gRPC Request: TakeOfferRequest</h3>
 <table><thead>
 <tr>
