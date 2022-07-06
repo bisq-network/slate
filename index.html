@@ -319,16 +319,25 @@
             <a href="#introduction" class="toc-h1 toc-link" data-title="Introduction">Introduction</a>
           </li>
           <li>
+            <a href="#warning" class="toc-h1 toc-link" data-title="Warning">Warning</a>
+          </li>
+          <li>
             <a href="#running-example-code" class="toc-h1 toc-link" data-title="Running Example Code">Running Example Code</a>
               <ul class="toc-list-h2">
                   <li>
                     <a href="#cli-examples" class="toc-h2 toc-link" data-title="CLI Examples">CLI Examples</a>
                   </li>
                   <li>
-                    <a href="#java-examples" class="toc-h2 toc-link" data-title="Java Examples">Java Examples</a>
+                    <a href="#java-api-rpc-examples" class="toc-h2 toc-link" data-title="Java API RPC Examples">Java API RPC Examples</a>
                   </li>
                   <li>
-                    <a href="#python-examples" class="toc-h2 toc-link" data-title="Python Examples">Python Examples</a>
+                    <a href="#java-api-bots" class="toc-h2 toc-link" data-title="Java API Bots">Java API Bots</a>
+                  </li>
+                  <li>
+                    <a href="#python-api-rpc-examples" class="toc-h2 toc-link" data-title="Python API RPC Examples">Python API RPC Examples</a>
+                  </li>
+                  <li>
+                    <a href="#python-api-bots" class="toc-h2 toc-link" data-title="Python API Bots">Python API Bots</a>
                   </li>
               </ul>
           </li>
@@ -816,12 +825,22 @@ examples with the tabs on the top right.</p>
 </ul>
 
 <p>This API documentation was created with <a href="https://github.com/slatedocs/slate">Slate</a>.</p>
+<h1 id='warning'>Warning</h1>
+<p>Never run an API Daemon and the Bisq desktop application on the same host at the same time.</p>
+
+<p>The API daemon and the GUI share the same default wallet and connection ports. Beyond inevitable failures due to
+fighting over the wallet and ports, doing so will probably corrupt your wallet. Before starting the API daemon, make
+sure your GUI is shut down, and vice-versa. Please back up your mainnet wallet early and often with the GUI.</p>
 <h1 id='running-example-code'>Running Example Code</h1>
-<p>Examples should not be used to make calls to an API daemon connected to the bitcoin mainnet. There is a convenient way
-to run a regtest bitcoin-core daemon, a Bisq seed node, an arbitration node, and two regtest API daemons called Alice (
-listening on port 9998), and Bob (listening on port 9999). The Bob and Alice daemons will have regtest wallets
-containing 10 BTC. Bob&#39;s BSQ wallet will also be set up with 1500000 BSQ, Alice&#39;s with 1000000 BSQ. These two API
-daemons can simulate trading over the local regtest network.</p>
+<p>Be careful about running any example that could affect your mainnet wallet.  You might want to send <code>sendbsq</code>, 
+<code>sendbtc</code>, <code>createoffer</code>, and <code>takeoffer</code> requests to an API daemon connected to a local regtest network before trying 
+them on mainnet.</p>
+
+<p>There is a convenient way to run a regtest bitcoin-core daemon, a Bisq seed node, an arbitration node, and two regtest 
+API daemons called Alice (listening on port 9998), and Bob (listening on port 9999). The Bob and Alice daemons will 
+have regtest wallets containing 10 BTC. Bob&#39;s BSQ wallet will also be set up with 1500000 BSQ, Alice&#39;s with 1000000 BSQ. 
+These two API daemons can simulate trading over the local regtest network.  Running a local, Bisq regtest network is 
+useful if you want to develop your own API bots.</p>
 
 <p>See
 the <a href="https://github.com/bisq-network/bisq/blob/master/apitest/docs/api-beta-test-guide.md">Bisq API Beta Testing Guide</a>
@@ -833,12 +852,12 @@ document.</p>
 <p>The only requirements are:</p>
 
 <ul>
-<li>A running, local API daemon, preferably the test harness described in
+<li>A running API daemon, preferably the test harness described in
 the <a href="https://github.com/bisq-network/bisq/blob/master/apitest/docs/api-beta-test-guide.md">Bisq API Beta Testing Guide</a></li>
 <li>A terminal open in the Bisq source project&#39;s root directory</li>
 </ul>
-<h2 id='java-examples'>Java Examples</h2>
-<p>Running Java examples requires:</p>
+<h2 id='java-api-rpc-examples'>Java API RPC Examples</h2>
+<p>Running Java RPC request examples requires:</p>
 
 <ul>
 <li>A running, local API daemon, preferably the test harness described in
@@ -847,20 +866,10 @@ the <a href="https://github.com/bisq-network/bisq/blob/master/apitest/docs/api-b
 <li>Generating protobuf and gRPC service stubs using the the <a href="https://grpc.io/docs/protoc-installation/">protoc</a> compiler,
 with the <a href="https://github.com/grpc/grpc-java">protoc-gen-grpc-java</a> plugin.</li>
 </ul>
-<h3 id='download-the-bisq-proto-files-to-your-java-project'>Download the Bisq .proto files to your Java project</h3>
-<p>If your Java source is located in a directory named  <code>my-api-app/src/main</code>, open a terminal in your project root
-directory (<code>my-api-app</code>), and the Bisq .proto files are located in a directory named <code>my-api-app/src/main/proto</code>:</p>
-
-<p><code>$ export PROTO_PATH=&quot;src/main/proto&quot;</code></br>
-    <code>$ curl -o $PROTO_PATH/pb.proto https://raw.githubusercontent.com/bisq-network/bisq/master/proto/src/main/proto/pb.proto</code></br>
-    <code>$ curl -o $PROTO_PATH/grpc.proto https://raw.githubusercontent.com/bisq-network/bisq/master/proto/src/main/proto/grpc.proto</code></p>
-<h3 id='generate-bisq-api-protobuf-stubs-using-gradle-grpc-java-plugin-recommended'>Generate Bisq API protobuf stubs using Gradle grpc-java plugin (recommended)</h3>
-<p>You can generate Java API stubs in a Gradle project using the <a href="https://github.com/grpc/grpc-java">protoc-gen-grpc-java</a>
-plugin. Try the <a href="https://github.com/bisq-network/bisq-api-reference/blob/main/java-examples/build.gradle">build.gradle</a>
-file used by the project providing the Java examples for this document; it should work for you.</p>
-
-<p><em>Note: You can also generate stubs with <a href="https://github.com/grpc/grpc-java">protoc-gen-grpc-java</a> in maven projects.</em></p>
-<h3 id='generate-bisq-api-protobuf-stubs-using-grpc-java-plugin-from-terminal'>Generate Bisq API protobuf stubs using grpc-java plugin from terminal</h3>
+<h3 id='download-bisq-proto-files-and-generate-api-39-s-gprc-service-stubs'>Download Bisq .proto files and generate API&#39;s gPRC service stubs</h3>
+<p>See <a href="https://github.com/bisq-network/bisq-api-reference/blob/main/java-examples/README.md#generating-protobuf-code">Generating Protobuf Code</a>
+in the java-examples README.</p>
+<h3 id='do-it-yourself-manually-generate-bisq-api-protobuf-stubs-with-protoc-compiler-and-grpc-java-plugin'>Do it yourself:  manually generate Bisq API protobuf stubs with protoc compiler and grpc-java plugin</h3>
 <p>If you prefer to generate the Java protos from a terminal, you can compile
 the <a href="https://github.com/grpc/grpc-java/blob/master/COMPILING.md">protoc gen-java</a> binary from source, or manually
 download the <a href="https://repo1.maven.org/maven2/io/grpc/protoc-gen-grpc-java/">binary</a> to your system <code>PATH</code>, and
@@ -873,11 +882,16 @@ run <code>protoc</code> with the appropriate options:</p>
 
 <p><em>Note:  My attempts to compile the protoc gen-java plugin on my own platform were unsuccessful. You may have better luck
 or time to resolve platform specific build issues.</em></p>
-<h2 id='python-examples'>Python Examples</h2>
+<h2 id='java-api-bots'>Java API Bots</h2>
+<p>There are some simple, mainnet-ready <a href="https://github.com/bisq-network/bisq-api-reference/tree/main/java-examples/src/main/java/bisq/bots">bots</a>
+in the project. The requirements are the same as for the RPC request examples.<br>
+See the <a href="https://github.com/bisq-network/bisq-api-reference/blob/main/java-examples/README.md#java-api-bots">Java API Bots README</a> 
+for details.</p>
+<h2 id='python-api-rpc-examples'>Python API RPC Examples</h2>
 <p>Running Python examples requires:</p>
 
 <ul>
-<li>A running, local API daemon, preferably the test harness described in
+<li>A running API daemon, preferably the test harness described in
 the <a href="https://github.com/bisq-network/bisq/blob/master/apitest/docs/api-beta-test-guide.md">Bisq API Beta Testing Guide</a></li>
 <li>Downloading Bisq protobuf definition files</li>
 <li>Generating protobuf and gRPC service stubs using the <code>protoc</code> compiler, with two additional Python protobuf and grpc
@@ -885,12 +899,20 @@ plugins.</li>
 </ul>
 
 <p>You can download the Bisq protobuf (.proto) files by running:</p>
-
-<p><code>proto-downloader/download-bisq-protos.sh</code></p>
-
+<div class="highlight"><pre class="highlight plaintext"><code>$ proto-downloader/download-bisq-protos.sh
+</code></pre></div>
 <p>You can build Python .proto stubs, install Python example dependencies, and package the examples by running:</p>
+<div class="highlight"><pre class="highlight plaintext"><code>$ python-examples/run-setup.sh
+</code></pre></div><h2 id='python-api-bots'>Python API Bots</h2>
+<p>There are some simple, <em>not-ready-for-mainnet</em> <a href="https://github.com/bisq-network/bisq-api-reference/tree/main/python-examples/bisq/bots">Python bots</a>
+in the project.  They do not properly handle errors as the <a href="https://github.com/bisq-network/bisq-api-reference/blob/main/java-examples/README.md#java-api-bots">Java bots</a>
+do.  </p>
 
-<p><code>python-examples/run-setup.sh</code></p>
+<p>These might give a more experienced Python developer a starting point for writing their own Python API
+bots, but the Python dev should refer to the <a href="https://github.com/bisq-network/bisq-api-reference/blob/main/java-examples/README.md#java-api-bots">Java bot</a> 
+examples for safer error handling.</p>
+
+<p>The requirements are the same as for the Python RPC request examples. </p>
 <h1 id='authentication'>Authentication</h1>
 <p>An API password option <code>--apiPassword=&lt;api-password&gt;</code> is passed in the daemon&#39;s start command.</p>
 
