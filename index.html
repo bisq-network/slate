@@ -6033,13 +6033,15 @@ The response contains the average BSQ trade price in USD to 4 decimal places, an
 <h2 id='rpc-method-takeoffer'>RPC Method TakeOffer</h2><div class="highlight"><pre class="highlight shell tab-shell"><code><span class="c">#!/bin/bash</span>
 
 <span class="c"># Take a BSQ swap offer.</span>
-./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 takeoffer <span class="nt">--offer-id</span><span class="o">=</span>8368b2e2-anb6-4ty9-ab09-3ebdk34f2aea
+<span class="c"># The amount param is optional.</span>
+./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 takeoffer <span class="nt">--offer-id</span><span class="o">=</span>8368b2e2-anb6-4ty9-ab09-3ebdk34f2aea <span class="nt">--amount</span><span class="o">=</span>0.1
 
 <span class="c"># Take an offer that is not a BSQ swap offer.</span>
-<span class="c"># The payment-account-id param is required, the fee-currency param is optional.</span>
+<span class="c"># The payment-account-id param is required, the amount and fee-currency params are optional.</span>
 ./bisq-cli <span class="nt">--password</span><span class="o">=</span>xyz <span class="nt">--port</span><span class="o">=</span>9998 takeoffer <span class="se">\</span>
     <span class="nt">--offer-id</span><span class="o">=</span>83e8b2e2-51b6-4f39-a748-3ebd29c22aea <span class="se">\</span>
     <span class="nt">--payment-account-id</span><span class="o">=</span>fe20cdbd-22be-4b8a-a4b6-d2608ff09d6e <span class="se">\</span>
+    <span class="nt">--amount</span><span class="o">=</span>0.08 <span class="se">\</span>
     <span class="nt">--fee-currency</span><span class="o">=</span>BTC
 
 </code></pre></div><div class="highlight"><pre class="highlight java tab-java"><code><span class="kn">package</span> <span class="nn">bisq.rpccalls</span><span class="o">;</span>
@@ -6072,7 +6074,8 @@ The response contains the average BSQ trade price in USD to 4 decimal places, an
             <span class="kt">var</span> <span class="n">offerCategory</span> <span class="o">=</span> <span class="n">offersStub</span><span class="o">.</span><span class="na">getOfferCategory</span><span class="o">(</span><span class="n">getOfferCategoryRequest</span><span class="o">);</span>
             <span class="c1">// Create a takeoffer request builder with just the offerId parameter.</span>
             <span class="kt">var</span> <span class="n">takeOfferRequestBuilder</span> <span class="o">=</span> <span class="nc">TakeOfferRequest</span><span class="o">.</span><span class="na">newBuilder</span><span class="o">()</span>
-                    <span class="o">.</span><span class="na">setOfferId</span><span class="o">(</span><span class="s">"83e8b2e2-51b6-4f39-a748-3ebd29c22aea"</span><span class="o">);</span>
+                    <span class="o">.</span><span class="na">setOfferId</span><span class="o">(</span><span class="s">"83e8b2e2-51b6-4f39-a748-3ebd29c22aea"</span><span class="o">)</span>
+                    <span class="o">.</span><span class="na">setAmount</span><span class="o">(</span><span class="mi">1_000_000L</span><span class="o">);</span>  <span class="c1">// 1 million satoshis = 0.01 BTC</span>
             <span class="c1">//  If offer is not a BSQ swap offer, add the paymentAccountId and takerFeeCurrencyCode parameters.</span>
             <span class="k">if</span> <span class="o">(!</span><span class="n">offerCategory</span><span class="o">.</span><span class="na">equals</span><span class="o">(</span><span class="no">BSQ_SWAP</span><span class="o">))</span>
                 <span class="n">takeOfferRequestBuilder</span>
@@ -6174,7 +6177,7 @@ The response contains the average BSQ trade price in USD to 4 decimal places, an
 
 
 <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
-    <span class="n">grpc_channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="p">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s">'localhost:9999'</span><span class="p">)</span>
+    <span class="n">grpc_channel</span> <span class="o">=</span> <span class="n">grpc</span><span class="p">.</span><span class="n">insecure_channel</span><span class="p">(</span><span class="s">'localhost:9998'</span><span class="p">)</span>
     <span class="n">grpc_offers_service_stub</span> <span class="o">=</span> <span class="n">bisq_service</span><span class="p">.</span><span class="n">OffersStub</span><span class="p">(</span><span class="n">grpc_channel</span><span class="p">)</span>
     <span class="n">grpc_trades_service_stub</span> <span class="o">=</span> <span class="n">bisq_service</span><span class="p">.</span><span class="n">TradesStub</span><span class="p">(</span><span class="n">grpc_channel</span><span class="p">)</span>
     <span class="n">api_password</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s">'xyz'</span>  <span class="c1"># getpass("Enter API password: ")
@@ -6182,13 +6185,17 @@ The response contains the average BSQ trade price in USD to 4 decimal places, an
         <span class="c1"># We need to send our payment account id and an (optional) taker fee currency code if offer
 </span>        <span class="c1"># is not a BSQ swap offer.  Find out by calling GetOfferCategory before taking the offer.
 </span>        <span class="n">get_offer_category_response</span> <span class="o">=</span> <span class="n">grpc_offers_service_stub</span><span class="p">.</span><span class="n">GetOfferCategory</span><span class="p">.</span><span class="n">with_call</span><span class="p">(</span>
-            <span class="n">bisq_messages</span><span class="p">.</span><span class="n">GetOfferCategoryRequest</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s">'4940749-73a2e9c3-d5b9-440a-a05d-9feb8e8805f0-182'</span><span class="p">),</span>
+            <span class="n">bisq_messages</span><span class="p">.</span><span class="n">GetOfferCategoryRequest</span><span class="p">(</span><span class="nb">id</span><span class="o">=</span><span class="s">'MGAQRIJJ-3aba77be-588c-4f98-839e-53fac183b823-194'</span><span class="p">),</span>
             <span class="n">metadata</span><span class="o">=</span><span class="p">[(</span><span class="s">'password'</span><span class="p">,</span> <span class="n">api_password</span><span class="p">)])</span>
         <span class="n">offer_category</span> <span class="o">=</span> <span class="n">get_offer_category_response</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">offer_category</span>
         <span class="n">is_bsq_swap</span> <span class="o">=</span> <span class="n">offer_category</span> <span class="o">==</span> <span class="n">bisq_messages</span><span class="p">.</span><span class="n">GetOfferCategoryReply</span><span class="p">.</span><span class="n">BSQ_SWAP</span>
-        <span class="n">take_offer_request</span> <span class="o">=</span> <span class="n">bisq_messages</span><span class="p">.</span><span class="n">TakeOfferRequest</span><span class="p">(</span><span class="n">offer_id</span><span class="o">=</span><span class="s">'4940749-73a2e9c3-d5b9-440a-a05d-9feb8e8805f0-182'</span><span class="p">)</span>
+        <span class="n">take_offer_request</span> <span class="o">=</span> <span class="n">bisq_messages</span><span class="p">.</span><span class="n">TakeOfferRequest</span><span class="p">(</span>
+            <span class="n">offer_id</span><span class="o">=</span><span class="s">'MGAQRIJJ-3aba77be-588c-4f98-839e-53fac183b823-194'</span><span class="p">,</span>
+            <span class="c1"># 10 million satoshis = 0.1 BTC
+</span>            <span class="n">amount</span><span class="o">=</span><span class="mi">10000000</span>
+        <span class="p">)</span>
         <span class="k">if</span> <span class="ow">not</span> <span class="n">is_bsq_swap</span><span class="p">:</span>
-            <span class="n">take_offer_request</span><span class="p">.</span><span class="n">payment_account_id</span> <span class="o">=</span> <span class="s">'44838060-ddb5-4fa4-8b34-c128a655316e'</span>
+            <span class="n">take_offer_request</span><span class="p">.</span><span class="n">payment_account_id</span> <span class="o">=</span> <span class="s">'88892636-81a1-4864-a396-038297e112cf'</span>
             <span class="n">take_offer_request</span><span class="p">.</span><span class="n">taker_fee_currency_code</span> <span class="o">=</span> <span class="s">'BSQ'</span>
         <span class="n">response</span> <span class="o">=</span> <span class="n">grpc_trades_service_stub</span><span class="p">.</span><span class="n">TakeOffer</span><span class="p">.</span><span class="n">with_call</span><span class="p">(</span>
             <span class="n">take_offer_request</span><span class="p">,</span>
@@ -6225,6 +6232,11 @@ the offer&#39;s payment method, e.g., NATIONAL_BANK, SEPA, SWIFT, etc.</p>
 <td>taker_fee_currency_code</td>
 <td>string</td>
 <td>The code of the currency (BSQ or BTC) used to pay the taker&#39;s Bisq trade fee.</td>
+</tr>
+<tr>
+<td>amount</td>
+<td>uint64</td>
+<td>The trade&#39;s intended BTC amount in satoshis.  Ten million satoshis is represented as 10000000.<br/>If set, the takeoffer amount value must be &gt;= offer.min_amount and &lt;= offer.amount.<br/>If not set (0 default), the taken offer&#39;s (max) amount becomes the intended trade amount.<br/></td>
 </tr>
 </tbody></table>
 <h3 id='grpc-response-takeofferreply'>gRPC Response: TakeOfferReply</h3>
