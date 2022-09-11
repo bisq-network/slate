@@ -6227,12 +6227,12 @@ the offer&#39;s payment method, e.g., NATIONAL_BANK, SEPA, SWIFT, etc.</p>
 <tr>
 <td>payment_account_id</td>
 <td>string</td>
-<td>The unique identifier of the payment account used to take offer.</td>
+<td>The unique identifier of the payment account used to take a Bisq v1 protocol offer.<br/>This payment_account_id request param is not used when taking a BSQ Swap offer;<br/>all BSQ Swap transactions use the daemon&#39;s default BsqSwapAccount.<br/></td>
 </tr>
 <tr>
 <td>taker_fee_currency_code</td>
 <td>string</td>
-<td>The code of the currency (BSQ or BTC) used to pay the taker&#39;s Bisq trade fee.</td>
+<td>The code of the currency (BSQ or BTC) used to pay the taker&#39;s Bisq v1 protocol trade fee.<br/>This taker_fee_currency_code request param is not used when taking a BSQ Swap offer;<br/>all BSQ Swap trade fees are paid in BSQ.<br/></td>
 </tr>
 <tr>
 <td>amount</td>
